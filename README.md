@@ -2,6 +2,8 @@
 
 A simple password generator for the terminal. It generates random characters based on the current thread of execution and copies them directly to the clipboard.
 
+Only available for Linux. If you want to use it on Windows or Mac, you'll need to compile the source code with the Rust compiler for your OS and install the program globally.
+
 ## Usage
 
 ``` bash
@@ -17,25 +19,21 @@ Copied to clipboard
 
 ## Setup
 
-1. **Clone the repository**
+1. Download the latest release
 
-``` bash
-git clone https://github.com/edulustosa/passgen.git
-```
-
-2. **Move into the project directory and copy the binaries to the global directory**
+2. Move into the program directory and copy the binaries to the global directory
 
 ``` bash
 sudo cp release/passgen /usr/local/bin/
 ```
 
-3. **You may need to grant execution permissions**
+3. You may need to grant execution permissions
 
 ``` bash
 sudo chmod +x /usr/local/bin/passgen
 ```
 
-4. **Finally, update the binaries cache**
+4. Finally, update the binaries cache
 
 ``` bash
 sudo update-binfmts --import
