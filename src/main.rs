@@ -1,9 +1,10 @@
-use copypasta::{ClipboardContext, ClipboardProvider};
-use rand::{thread_rng, Rng};
 use std::env::args;
+use rand::{thread_rng, Rng};
+use clipboard::{ClipboardContext, ClipboardProvider};
 
 fn get_symbol() -> char {
-    let symbols = String::from("!@#$%¨&*+*/:~|=-");
+    let symbols = "!@#$%¨&*+*/:~|=-";
+
     symbols
         .chars()
         .nth(thread_rng().gen_range(0..symbols.len() - 1))
@@ -42,9 +43,16 @@ fn main() {
 
     if args.len() > 1 {
         password_length = match args[1].parse() {
-            Ok(x) => x,
+            Ok(length) => {
+                if length > 128 {
+                    println!("Maximum value for length is 128");
+                    return;
+                }
+
+                length
+            }
             Err(_) => {
-                println!("Length needs to be a number");
+                println!("Length needs to be a positive number");
                 println!("Usage: passgen <length>");
                 return;
             }
@@ -54,7 +62,7 @@ fn main() {
     let password = passgen(password_length);
     println!("Password: {}", password);
 
-    let mut ctx = ClipboardContext::new().unwrap();
+    let mut ctx: ClipboardContext = ClipboardProvider::new().unwrap();
 
     ctx.set_contents(password).unwrap();
     ctx.get_contents().unwrap();
