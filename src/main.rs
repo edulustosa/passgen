@@ -1,9 +1,9 @@
-use std::env::args;
-use rand::{thread_rng, Rng};
 use clipboard::{ClipboardContext, ClipboardProvider};
+use rand::{thread_rng, Rng};
+use std::{env::args, ops::RangeInclusive, process};
 
 fn get_symbol() -> char {
-    let symbols = "!@#$%¨&*+*/:~|=-";
+    let symbols = "!@#$%^&*";
 
     symbols
         .chars()
@@ -11,17 +11,21 @@ fn get_symbol() -> char {
         .unwrap()
 }
 
+fn get_char_from_range(range: RangeInclusive<u32>) -> char {
+    char::from_u32(thread_rng().gen_range(range)).unwrap()
+}
+
 fn passgen(length: u32) -> String {
     let mut password = String::new();
     let types = ["number", "lowercase", "uppercase", "symbols"];
 
-    for _i in 0..length {
+    for _ in 0..length {
         let char_type = types[thread_rng().gen_range(0..4)];
 
         match char_type {
-            "number" => password.push(char::from_u32(thread_rng().gen_range(48..=57)).unwrap()),
-            "lowercase" => password.push(char::from_u32(thread_rng().gen_range(97..=122)).unwrap()),
-            "uppercase" => password.push(char::from_u32(thread_rng().gen_range(65..=90)).unwrap()),
+            "number" => password.push(get_char_from_range(48..=57)),
+            "lowercase" => password.push(get_char_from_range(97..=122)),
+            "uppercase" => password.push(get_char_from_range(65..=90)),
             "symbols" => password.push(get_symbol()),
             _ => continue,
         }
@@ -34,9 +38,9 @@ fn main() {
     let args: Vec<String> = args().collect();
 
     if args.len() > 2 {
-        println!("Too many arguments");
-        println!("Usage: passgen <length>");
-        return;
+        eprintln!("Length needs to be a positive number");
+        eprintln!("Usage: passgen <length>");
+        process::exit(1);
     }
 
     let mut password_length = 20;
@@ -44,17 +48,17 @@ fn main() {
     if args.len() > 1 {
         password_length = match args[1].parse() {
             Ok(length) => {
-                if length > 128 {
-                    println!("Maximum value for length is 128");
-                    return;
+                if length > 128 || length < 8 {
+                    eprintln!("Length needs to be between 8 and 128");
+                    process::exit(1);
                 }
 
                 length
             }
             Err(_) => {
-                println!("Length needs to be a positive number");
-                println!("Usage: passgen <length>");
-                return;
+                eprintln!("Length needs to be a positive number");
+                eprintln!("Usage: passgen <length>");
+                process::exit(1);
             }
         };
     }
